@@ -15,8 +15,6 @@ Projeto sobre machine learning em diabetes para a cadeira de PISI3 do BSI da UFR
     <code>python -m pip install --upgrade pip</code>
   </li>
 
-  <li>Baixe este projeto e descompacte o conteudo em uma pasta <code>teste_streamlit</code>. Entre na pasta.</li>
-
   <li>Execute:
     <code>pip install -r requirements.txt --upgrade</code>
   </li>
