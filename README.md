@@ -1,7 +1,7 @@
 # DIABETES PISI3 - BSI - UFRPE
-por: Alana Lins, Davi Vieira, David Erick, Luis Henrique
+por: Alana Lins, Davi Vieira, David Erick, Luis Henrique;
 
-Este projeto sobre machine learning em diabetes para a cadeira de pisi3 do BSI da UFRPE utilizando o Streamlit.
+Este projeto sobre machine learning em diabetes para a cadeira de PISI3 do BSI da UFRPE utilizando o Streamlit.
 
 ## Instalação:
 <ol>
