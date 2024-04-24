@@ -1,7 +1,7 @@
-# Teste Streamlit PISI3 - BSI - UFRPE
-por: Gabriel Alves (gabriel.alves@ufrpe.br)
+# DIABETES PISI3 - BSI - UFRPE
+por: Alana Lins, Davi Vieira, David Erick, Luis Henrique
 
-Este projeto é utilizado para as aulas da disciplina de pisi3 do BSI da UFRPE para ensinar o Streamlit.
+Este projeto sobre machine learning em diabetes para a cadeira de pisi3 do BSI da UFRPE utilizando o Streamlit.
 
 ## Instalação:
 <ol>
@@ -25,13 +25,3 @@ Este projeto é utilizado para as aulas da disciplina de pisi3 do BSI da UFRPE p
     <code>streamlit run app.py</code>
   </li>
 </ol>
-
-## Informações Adicionais:
-
-Este projeto tem 3 branches com códigos distintos:
-<ol>
-  <li>main: código inicial com o uso básico do streamlit. Possui uma caixa de texto e exibe uma mensagem ao preenchê-la.</li>
-  <li>theme: código para mostrar como funciona o uso de temas no streamlit.</li>
-  <li>profile: código com várias funcionalidades diferentes, desde o uso do sidebar até instruções de como utilizar arquivos parquet e o ydata-profile.</li>
-</ol>
-Disponível em: https://gaaj-ufrpe-teste-streamlit-home-profile-igxpg2.streamlit.app/
