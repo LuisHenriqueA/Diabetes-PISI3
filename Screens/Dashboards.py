@@ -22,7 +22,7 @@ def build_body():
     build_dataframe(df)
     st.markdown('<h2>Gráficos iniciais</h2>', unsafe_allow_html=True)
     build_diabetesplot_section(df)
-    build_boxplot_section(df)
+    build_boxpolot_expander(df)
    
 
 def build_diabetesplot_section(df:pd.DataFrame):
@@ -57,3 +57,20 @@ def build_boxplot_section(df:pd.DataFrame):
     fig = px.box(df_plot,x=col_selected[0], y=col_selected[1])
     fig.update_traces(marker_color='#0BAB7C')
     c2.plotly_chart(fig, use_container_width=True)
+
+def build_boxpolot_expander(df:pd.DataFrame):
+    st.markdown('<h3>Diagramas de caixa</h3>', unsafe_allow_html=True)
+    cols = ['Diabetes','IMC', 'Saúde_geral']
+    df_plot = df[cols]
+    with st.expander('Boxplot de condição diabética por Saúde geral'):
+        _, c2, _ = st.columns([1,2,1])
+        fig1 = px.box(df_plot,x=cols[0], y=cols[2])
+        fig1.update_traces(marker_color='#0BAB7C')
+        fig1.update_layout( xaxis_title_text='Condição', yaxis_title_text='Saúde geral')
+        c2.plotly_chart(fig1)
+    with st.expander('Boxplot de IMC por condição diabética'):
+        _, c2, _ = st.columns([1,2,1])
+        fig2 = px.box(df_plot,x=cols[1], y=cols[0])
+        fig2.update_traces(marker_color='#0BAB7C')
+        fig2.update_layout(yaxis_title_text='Condição')
+        c2.plotly_chart(fig2)

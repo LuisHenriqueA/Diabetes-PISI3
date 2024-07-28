@@ -7,5 +7,5 @@ def add_header():
     with c2:
         st.markdown(
             '''
-        <h2>Dattageters</h2>
+        <h2>Datagetters</h2>
         ''', unsafe_allow_html=True)
