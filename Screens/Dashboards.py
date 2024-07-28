@@ -1,8 +1,8 @@
 import pandas as pd
-import numpy as np
+#import numpy as np
 import streamlit as st
-import seaborn as sns
-import matplotlib.pyplot as plt
+#import seaborn as sns
+#import matplotlib.pyplot as plt
 import plotly.express as px
 import plotly.graph_objects as go
 from utils.plot_utils import read_df, build_dataframe
@@ -22,7 +22,8 @@ def build_body():
     build_dataframe(df)
     st.markdown('<h2>Gráficos iniciais</h2>', unsafe_allow_html=True)
     build_diabetesplot_section(df)
-    
+    build_boxplot_section(df)
+   
 
 def build_diabetesplot_section(df:pd.DataFrame):
     st.markdown('<h3>Histogramas diabéticos</h3>', unsafe_allow_html=True)
@@ -35,9 +36,24 @@ def build_diabetesplot_section(df:pd.DataFrame):
     #else:
     #    fig = create_histograma_stacked(df, selec_col)
     fig.update_layout(title=f'Histograma de {selec_col} por condição diabética.',
-                      legend_title_text=selec_col, xaxis_title_text='Condição', yaxis_title_text='Quantidade')
+                        legend_title_text=selec_col, xaxis_title_text='Condição', yaxis_title_text='Quantidade')
     c2.plotly_chart(fig, use_container_width=True)
-    
+   
 def create_histograma_stacked(df:pd.DataFrame, series_col:str) -> go.Figure:
     df = df.query(f'{series_col}.notna()').copy()
-    return px.histogram(df, x='Diabetes', nbins=20, color=series_col, opacity=.75)
+    color_map = {'sim': '#0BAB7C', 'não': '#C7F4C2'}
+    return px.histogram(df, x='Diabetes', nbins=20, color=series_col, opacity=.75, color_discrete_map=color_map)
+
+def build_boxplot_section(df:pd.DataFrame):
+    st.markdown('<h3>Diagramas de caixa</h3>', unsafe_allow_html=True)
+    c1, c2 = st.columns([.3,.7])
+    cols = ['IMC', 'Saúde_geral']
+    selec_col = c1.selectbox('Seleção', options=cols, key='selec_2')
+    reverse = c1.checkbox('Invertido', value=False)
+    col_selected = [selec_col, 'Diabetes']
+    if reverse:
+        col_selected.reverse()
+    df_plot = df[col_selected]
+    fig = px.box(df_plot,x=col_selected[0], y=col_selected[1])
+    fig.update_traces(marker_color='#0BAB7C')
+    c2.plotly_chart(fig, use_container_width=True)
