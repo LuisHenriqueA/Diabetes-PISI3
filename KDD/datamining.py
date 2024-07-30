@@ -4,11 +4,25 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import classification_report, accuracy_score
 import os
-#alterar para ser geral
-caminho_arquivo = '/Users/alanalins/pisi3/Diabetes-PISI3/KDD/dfCleaned.csv'
+
+caminho_arquivo = 'dfCleaned.csv'
 df = pd.read_csv(caminho_arquivo, encoding='utf-8', low_memory=False)
 print(df.head())
-X = df.drop(columns=['DiffWalk'])
+selected_columns = [
+    'NoDocbcCost', 
+    'AnyHealthcare', 
+    'Veggies', 
+    'Fruits', 
+    'PhysActivity', 
+    'HeartDiseaseorAttack', 
+    'Smoker', 
+    'CholCheck', 
+    'HighBP', 
+    'Diabetes_012', 
+]
+X = df[selected_columns]
+# Ver as colunas do DataFrame
+print(df.columns)
 y = df['DiffWalk']
 
 # Dividir os dados em conjuntos de treino e teste
@@ -20,7 +34,7 @@ X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
 # Criar e treinar o modelo KNN
-knn = KNeighborsClassifier(n_neighbors=5)
+knn = KNeighborsClassifier(n_neighbors=3)
 knn.fit(X_train_scaled, y_train)
 
 # Fazer previsões no conjunto de teste
