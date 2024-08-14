@@ -5,7 +5,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import classification_report, accuracy_score
 import os
 
-caminho_arquivo = 'dfCleaned.csv'
+caminho_arquivo = 'df_normalizado.csv'
 df = pd.read_csv(caminho_arquivo, encoding='utf-8', low_memory=False)
 print(df.head())
 selected_columns = [
