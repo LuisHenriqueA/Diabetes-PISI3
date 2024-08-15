@@ -10,7 +10,7 @@ def __rename_data() -> pd.DataFrame:
         'Diabetes_012':'Diabetes_val', 'HighBP':'Hipertensão_val', 'HighChol':'Colesterol_alto_val',
         'CholCheck':'Colesterol_checado', 'BMI':'IMC', 'Smoker':'Fumante_val',
         'PhysActivity':'Atividades_físicas_val', 'GenHlth':'Saúde_geral_val', 'Age':'Idade',
-        'AnyHealthcare':'Cobertura_saúde_val'
+        'AnyHealthcare':'Cobertura_saúde_val', 'Sex':'Sexo_val'
     }, inplace=True)
     return df
 
@@ -20,6 +20,9 @@ def __transform_data(df:pd.DataFrame) -> pd.DataFrame:
     })
     df['Fumante'] = df['Fumante_val'].map({
         0:'não', 1:'sim'
+    })
+    df['Sexo'] = df['Sexo_val'].map({
+        0:'Feminino', 1:'Masculino'
     })
     df['Atividades_físicas'] = df['Atividades_físicas_val'].map({
         0:'não', 1:'sim'

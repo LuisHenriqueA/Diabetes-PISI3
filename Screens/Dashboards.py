@@ -23,7 +23,6 @@ def build_body():
     st.markdown('<h2>Gráficos iniciais</h2>', unsafe_allow_html=True)
     build_diabetesplot_section(df)
     build_boxpolot_expander(df)
-   
 
 def build_diabetesplot_section(df:pd.DataFrame):
     st.markdown('<h3>Histogramas diabéticos</h3>', unsafe_allow_html=True)
