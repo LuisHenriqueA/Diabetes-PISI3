@@ -66,31 +66,25 @@ class Classifier:
     def classify(self):
         y_train_pred = self.sklearn_classifier.predict(self.X_train)
         y_test_pred = self.sklearn_classifier.predict(self.X_test)
-        st.write('''<b>ATENÇÃO:</b> O classificador deve ser treinado com o conjunto de treino e testado com o conjunto de teste. 
-                    Difícil não?! <b>Treino é treino, <del>jogo é jo...</del> teste é teste!</b>
-                    ''', unsafe_allow_html=True)
-        st.write('''<b>ATENÇÃO 2:</b> Para a etapa de treinamento, deve-se balancear as classes, especialmente no caso
-                 de dados muito desbalanceados, como no caso de eventos raros (ex.: fraude em cartão, doenças raras etc.).
-                    ''', unsafe_allow_html=True)
         st.write(f'<h2>{self.description}</h2>', unsafe_allow_html=True)
         c1, _, c2 = st.columns([.49, .02, .49])
         with c1:
-            self.__report('TREINO', '<div style="color: red; font-size: 1.5em">Treino é treino!</div>', self.y_train, y_train_pred)
+            self.__report('TREINO', '<div style="color: red; font-size: 1.5em"></div>', self.y_train, y_train_pred)
         with c2:
-            self.__report('TESTE', '<div style="font-family: cursive; font-size: 1.1em">Jogo é jogo!</div>', self.y_test, y_test_pred)
+            self.__report('TESTE', '<div style="font-family: cursive; font-size: 1.1em"></div>', self.y_test, y_test_pred)
         st.write('')
-        with st.expander('Dados Brutos'):
-            st.dataframe(self.df)
-        with st.expander('Dados Processados'):
-            c1, _, c2 = st.columns([.49, .02, .49])
-            c1.write('<h3>Treino</h3>', unsafe_allow_html=True)
-            c1.dataframe(self.X_train)
-            c2.write('<h3>Teste</h3>', unsafe_allow_html=True)
-            c2.dataframe(self.X_test)
+        #with st.expander('Dados Brutos'):
+        #   st.dataframe(self.df)
+        #with st.expander('Dados Processados'):
+        #    c1, _, c2 = st.columns([.49, .02, .49])
+        #    c1.write('<h3>Treino</h3>', unsafe_allow_html=True)
+        #    c1.dataframe(self.X_train)
+        #    c2.write('<h3>Teste</h3>', unsafe_allow_html=True)
+        #    c2.dataframe(self.X_test)
 
     def __report(self, title, desc, y_true, y_pred):
         st.write(f'<h3>{title}</h3>', unsafe_allow_html=True)
-        self.__build_confusion_matrix(y_true, y_pred)
+        # self.__build_confusion_matrix(y_true, y_pred)
         self.__build_results(desc, y_true, y_pred)
 
     def __build_results(self, desc, y_true, y_pred):
@@ -105,15 +99,15 @@ class Classifier:
         st.dataframe(df_report)
         st.write(desc, unsafe_allow_html=True)
 
-    def __build_confusion_matrix(self, y_true, y_pred):
-        matrix = confusion_matrix(y_true, y_pred)
-        fig, ax = plt.subplots()
-        sns.heatmap(matrix, annot=True, fmt='d', ax=ax, cmap='Blues', cbar=False)
-        ax.set_xlabel('Valores Previstos')
-        ax.set_ylabel('Valores Reais')
-        ax.set_title(f'Matriz de Confusão - {self.description}')
-        st.write('Matriz de Confusão')
-        st.pyplot(fig)
+    # def __build_confusion_matrix(self, y_true, y_pred):
+    #     matrix = confusion_matrix(y_true, y_pred)
+    #     fig, ax = plt.subplots()
+    #     sns.heatmap(matrix, annot=True, fmt='d', ax=ax, cmap='Blues', cbar=False)
+    #     ax.set_xlabel('Valores Previstos')
+    #     ax.set_ylabel('Valores Reais')
+    #     ax.set_title(f'Matriz de Confusão - {self.description}')
+    #     st.write('Matriz de Confusão')
+    #     st.pyplot(fig)
 
     def __build_report_df(self, report):
         df_dict = {

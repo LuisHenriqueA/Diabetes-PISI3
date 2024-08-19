@@ -40,7 +40,7 @@ def build_controls(df):
     if len(features) < 2:
         st.error('É preciso selecionar pelo menos 2 características.')
         return
-    c1, c2, c3 = st.columns(3)
+    c1, c2, c3 = st.columns([.3,.2,.5])
     c1.selectbox('Classificador', options=ClassifierType.values(), index=0, key='classificador')
 
 def load_df()->pd.DataFrame:
@@ -48,4 +48,4 @@ def load_df()->pd.DataFrame:
     return df_raw
 
 def _ingest_df()->pd.DataFrame:
-    return pd.read_csv('KDD/dfCleaned.csv')
+    return pd.read_parquet('KDD/dfCleaned.parquet')
