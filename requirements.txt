@@ -5,3 +5,4 @@ scikit-learn==1.3.2
 pandas>=2.0
 seaborn>=0.12
 notebook
+imbalanced-learn

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score, classification_report
-base = pd.read_csv('/Users/alanalins/pisi3/Diabetes-PISI3/KDD/dfCleaned.csv') #alterar
+base = pd.read_csv('KDD/dfCleaned.csv') #alterar
 base.head()
 #Separando em X e Y 
 X = base.drop('DiffWalk',axis=1)

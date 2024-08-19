@@ -2,10 +2,10 @@ import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 
 # Forneça o caminho do arquivo CSV
-caminho_arquivo = 'dfCleaned.csv'
+caminho_arquivo = 'KDD/dfCleaned.csv'
 
 # Carregar o dataframe a partir do arquivo CSV
-df_cleaned = pd.read_csv('dfCleaned.csv', encoding='utf-8', low_memory=False)
+df_cleaned = pd.read_csv(caminho_arquivo, encoding='utf-8', low_memory=False)
 
 # Inicializar o MinMaxScaler
 scaler = MinMaxScaler()
