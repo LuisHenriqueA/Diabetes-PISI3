@@ -57,19 +57,29 @@ def build_boxplot_section(df:pd.DataFrame):
     fig.update_traces(marker_color='#0BAB7C')
     c2.plotly_chart(fig, use_container_width=True)
 
-def build_boxpolot_expander(df:pd.DataFrame):
-    st.markdown('<h3>Diagramas de caixa</h3>', unsafe_allow_html=True)
-    cols = ['Diabetes','IMC', 'Saúde_geral']
+def build_boxpolot_expander(df: pd.DataFrame):
+    st.markdown('<h3>Gráficos Exploratórios</h3>', unsafe_allow_html=True)
+    cols = ['Diabetes', 'IMC', 'Saúde_geral']
     df_plot = df[cols]
-    with st.expander('Boxplot de condição diabética por Saúde geral'):
-        _, c2, _ = st.columns([1,2,1])
-        fig1 = px.box(df_plot,x=cols[0], y=cols[2])
-        fig1.update_traces(marker_color='#0BAB7C')
-        fig1.update_layout( xaxis_title_text='Condição', yaxis_title_text='Saúde geral')
+    
+    # Filtrando para ignorar pré-diabéticos
+    df_filtered = df_plot[df_plot['Diabetes'] != 'Pré-diabético']
+    
+    # Heatmap para condição diabética por saúde geral com cores ajustadas
+    with st.expander('Heatmap de condição diabética por Saúde geral'):
+        _, c2, _ = st.columns([1, 2, 1])
+        # Criando uma tabela de frequência para o heatmap com os dados filtrados
+        heatmap_data = df_filtered.pivot_table(index='Saúde_geral', columns='Diabetes', aggfunc='size', fill_value=0)
+        fig1 = px.imshow(heatmap_data, 
+                         labels=dict(x="Condição diabética", y="Saúde geral", color="Frequência"),
+                         color_continuous_scale='YlOrRd')
+        fig1.update_layout(xaxis_title_text='Condição diabética', yaxis_title_text='Saúde geral')
         c2.plotly_chart(fig1)
+    
+    # Boxplot de IMC por condição diabética
     with st.expander('Boxplot de IMC por condição diabética'):
-        _, c2, _ = st.columns([1,2,1])
-        fig2 = px.box(df_plot,x=cols[1], y=cols[0])
+        _, c2, _ = st.columns([1, 2, 1])
+        fig2 = px.box(df_plot, x=cols[0], y=cols[1])
         fig2.update_traces(marker_color='#0BAB7C')
-        fig2.update_layout(yaxis_title_text='Condição')
+        fig2.update_layout(yaxis_title_text='IMC', xaxis_title_text='Condição diabética')
         c2.plotly_chart(fig2)
