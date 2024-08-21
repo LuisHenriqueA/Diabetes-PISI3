@@ -14,8 +14,8 @@ from enum import Enum
 from imblearn.under_sampling import RandomUnderSampler
 
 class ClassifierType(Enum):
-    KNN = 'K-Nearest Neighbors', lambda: KNeighborsClassifier(n_neighbors=3)
     NAIVE_BAYES = 'Naive Bayes', lambda: GaussianNB()
+    KNN = 'K-Nearest Neighbors', lambda: KNeighborsClassifier(n_neighbors=3)
     RANDOM_FOREST = 'Random Forest', lambda: RandomForestClassifier(random_state=42)
 
     def __init__(self, description: str, builder: callable):
