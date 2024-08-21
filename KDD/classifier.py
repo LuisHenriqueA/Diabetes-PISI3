@@ -14,10 +14,11 @@ from enum import Enum
 from imblearn.under_sampling import RandomUnderSampler
 
 class ClassifierType(Enum):
-    KNN = 'K-Nearest Neighbors', lambda: KNeighborsClassifier(n_neighbors=3)
     NAIVE_BAYES = 'Naive Bayes', lambda: GaussianNB()
-    RANDOM_FOREST = 'Random Forest', lambda: RandomForestClassifier(random_state=42)
+    RANDOM_FOREST = 'Random Forest', lambda: RandomForestClassifier(max_depth=10, random_state=42)
+    KNN = 'K-Nearest Neighbors', lambda: KNeighborsClassifier(n_neighbors=3)
 
+    
     def __init__(self, description: str, builder: callable):
         self.description = description
         self.builder = builder

@@ -3,25 +3,37 @@ from utils.header import add_header
 
 def build_page():
     st.markdown('''
-        <style>
-        .justificado {
-            text-align: justify;
-        }
-        </style>
-        <div class= "justificado">
-            <h1>Aprendizado de máquina aplicado no contexto de Diabetes</h1>
-            <br>
-            Grupo: Alana lins; David Erick; Davi Vieira; Luis Henrique;
-            </br>
-            <br>
-            O presente estudo aborda a Diabetes Mellitus (DM) como um distúrbio metabólico que afeta milhões de pessoas globalmente, que destaca-se pela sua complexidade e impacto na qualidade de vida dos pacientes.
-            Com o aumento da prevalência da doença, surge a importância de estudos para entender o impacto da Diabetes na vida dos pacientes. 
-            Nesse contexto, a aplicação de técnicas de aprendizado de máquina, algoritmos de clusterização e classificação, 
-            surge como uma ferramenta  para analisar dados e identificar padrões que indicam impactos causados nos pacientes diabéticos e pré-diabéticos por conta da doença,
-            essa pesquisa visa utilizar as técnicas de aprendizado de máquina na base de dados Diabetes Health Indicator Dataset para conduzir sua análise e investigação. 
-            <br>
-        </div>
-    ''', unsafe_allow_html=True)
+    <style>
+    .justificado {
+        text-align: justify;
+    }
+    .perguntas {
+        font-size: 18px;
+        font-weight: bold;
+    }
+    </style>
+    <div class= "justificado">
+        <h1>Aprendizado de máquina aplicado no contexto de Diabetes</h1>
+        <br>
+        Grupo: Alana lins; David Erick; Davi Vieira; Luis Henrique;
+        </br>
+        <br>
+        O presente estudo aborda a Diabetes Mellitus (DM) como um distúrbio metabólico que afeta milhões de pessoas globalmente, que destaca-se pela sua complexidade e impacto na qualidade de vida dos pacientes.
+        Com o aumento da prevalência da doença, surge a importância de estudos para entender o impacto da Diabetes na vida dos pacientes. 
+        Nesse contexto, a aplicação de técnicas de aprendizado de máquina, algoritmos de clusterização e classificação, 
+        surge como uma ferramenta  para analisar dados e identificar padrões que indicam impactos causados nos pacientes diabéticos e pré-diabéticos por conta da doença,
+        essa pesquisa visa utilizar as técnicas de aprendizado de máquina na base de dados Diabetes Health Indicator Dataset para conduzir sua análise e investigação. 
+        <br>
+        <br>
+        <h2>Perguntas de Pesquisa</h2>
+        <ul class="perguntas">
+            <li>Quais são as disparidades de hábitos de vida entre pacientes não diabéticos e diabéticos? (Clusterização)</li>
+            <li>Como os dados sobre falta de visitas médicas por restrições financeiras, plano de saúde, consumo de vegetais e frutas, prática de atividade física, histórico de problemas cardíacos, tabagismo, verificações de colesterol, pressão alta e condições diabéticas podem ser usados para determinar se um paciente terá dificuldades em se locomover? (Classificação)</li>
+        </ul>
+            </div>
+        ''', unsafe_allow_html=True)
+
+
 
 def render_page(page_name):
     if page_name == "Home🏠":
