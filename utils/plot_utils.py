@@ -4,8 +4,8 @@ import streamlit as st
 from utils.df_functions import read_parquet
 #from df_functions import read_csv
 
-def __rename_data() -> pd.DataFrame:
-    df=read_parquet('diabetes_012_health_indicators_BRFSS2015')
+def __rename_data(df) -> pd.DataFrame:
+    df=read_parquet(df)
     df.rename(columns={
         'Diabetes_012':'Diabetes_val', 'HighBP':'Hipertensão_val', 'HighChol':'Colesterol_alto_val',
         'CholCheck':'Colesterol_checado', 'BMI':'IMC', 'Smoker':'Fumante_val',
@@ -36,8 +36,8 @@ def __transform_data(df:pd.DataFrame) -> pd.DataFrame:
     df.sort_values(by=['Fumante','Atividades_físicas','Cobertura_de_saúde', 'Saúde_geral_val'], inplace=True)
     return df
 
-def read_df() -> pd.DataFrame:
-    return __transform_data(__rename_data())
+def read_df(df) -> pd.DataFrame:
+    return __transform_data(__rename_data(df))
 
 def build_dataframe(df:pd.DataFrame):
     with st.expander('Dados do dataset'):

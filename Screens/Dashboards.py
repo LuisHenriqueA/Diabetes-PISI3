@@ -18,11 +18,12 @@ def build_header():
     st.write(text, unsafe_allow_html=True)
 
 def build_body():
-    df = read_df()
+    df = read_df('KDD/dfCleaned')
+    df_bruto = read_df('DiabetesDataSet/diabetes_012_health_indicators_BRFSS2015')
     build_dataframe(df)
     st.markdown('<h2>Gráficos iniciais</h2>', unsafe_allow_html=True)
     build_diabetesplot_section(df)
-    build_boxpolot_expander(df)
+    build_boxpolot_expander(df, df_bruto)
 
 def build_diabetesplot_section(df:pd.DataFrame):
     st.markdown('<h3>Histogramas diabéticos</h3>', unsafe_allow_html=True)
@@ -57,10 +58,15 @@ def build_boxplot_section(df:pd.DataFrame):
     fig.update_traces(marker_color='#0BAB7C')
     c2.plotly_chart(fig, use_container_width=True)
 
-def build_boxpolot_expander(df: pd.DataFrame):
+def build_boxpolot_expander(df: pd.DataFrame, df_bruto: pd.DataFrame):
     st.markdown('<h3>Gráficos Exploratórios</h3>', unsafe_allow_html=True)
+    
+    # Checkbox para selecionar o DataFrame
+    use_bruto = st.checkbox('Adicionar outliers', value=False)
+    selected_df = df_bruto if use_bruto else df
+    
     cols = ['Diabetes', 'IMC', 'Saúde_geral']
-    df_plot = df[cols]
+    df_plot = selected_df[cols]
     
     # Filtrando para ignorar pré-diabéticos
     df_filtered = df_plot[df_plot['Diabetes'] != 'Pré-diabético']

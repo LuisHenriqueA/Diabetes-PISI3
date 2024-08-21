@@ -20,17 +20,17 @@ def build_page():
 
 def build_header():
     st.write('<h1>Agrupamento (<i>Clustering</i>)</h1>', unsafe_allow_html=True)
-    st.write('''<i>Inicial.</i>''', unsafe_allow_html=True)
+    #st.write('''<i>Inicial.</i>''', unsafe_allow_html=True)
 
 def build_body():
     global n_clusters
     c1, c2 = st.columns(2)
     # Remove o multiselect e define as colunas de clustering diretamente
-    st.write("Colunas de clustering fixas: " + ", ".join(clustering_cols))
+    st.write("Colunas de clustering: " + ", ".join(clustering_cols))
     n_clusters = c2.slider('Quantidade de Clusters', min_value=2, max_value=10, value=3)
     df_raw = create_df_raw()
     df_clusters = create_df_clusters(df_raw)
-    plot_cluster(df_clusters, 'cluster', 'Cluster Sem Normalização')
+    plot_cluster(df_clusters, 'cluster', 'Clusters')
 
 def create_df_raw():
     cols = clustering_cols
