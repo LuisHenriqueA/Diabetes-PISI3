@@ -19,8 +19,14 @@ def build_body():
     df_bruto = read_df('DiabetesDataSet/diabetes_012_health_indicators_BRFSS2015')
     build_dataframe(df)
     
-    # Adicionando filtro de gênero
-    gender = st.radio("Selecione o Gênero", options=["Ambos", "Masculino", "Feminino"], index=0)
+    # Adicionando filtro de gênero na barra lateral
+    st.sidebar.markdown("### Filtro de Gênero")
+    gender = st.sidebar.radio("Selecione o Gênero:",
+                              options=["Ambos", "Masculino", "Feminino"],
+                              index=0,
+                              format_func=lambda x: f"{x} ({'Inclui todos os gêneros' if x == 'Ambos' else ''})")
+    
+    # Filtrando os dados com base no gênero selecionado
     if gender != "Ambos":
         df = df[df['Sexo'] == gender]
     
