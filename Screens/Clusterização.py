@@ -19,7 +19,7 @@ def build_page():
     build_body()
 
 def build_header():
-    st.write('<h1>Agrupamento (<i>Clustering</i>)</h1>', unsafe_allow_html=True)
+    st.write('<h1>Agrupamento com K-means (<i>Clustering</i>)</h1>', unsafe_allow_html=True)
     #st.write('''<i>Inicial.</i>''', unsafe_allow_html=True)
 
 def build_body():
