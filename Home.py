@@ -44,9 +44,12 @@ def render_page(page_name):
     elif page_name == "Clusterização🔍":
         import Screens.Clusterização
         Screens.Clusterização.build_page()
-    elif page_name == "Classificação📚":
-        import Screens.Classificacao
-        Screens.Classificacao.build_page()
+    elif page_name == "Predição🧠":
+        import Screens.Predição
+        Screens.Predição.build_page()
+    elif page_name == "Analise dos Clusters☯️":
+        import Screens.AnaliseClusters
+        Screens.AnaliseClusters.build_page()
         
 # Opções de navegação
 def configure_sidebar():
@@ -73,7 +76,7 @@ def configure_sidebar():
                         
     ''', unsafe_allow_html=True)
     
-    page = st.sidebar.radio("Páginas", ["Home🏠", "Dashboards📈", "Clusterização🔍", "Classificação📚" ], key='sidebar',  label_visibility="hidden")
+    page = st.sidebar.radio("Páginas", ["Home🏠", "Dashboards📈", "Clusterização🔍", "Predição🧠", "Analise dos Clusters☯️" ], key='sidebar',  label_visibility="hidden")
     return page
 
 def main():
