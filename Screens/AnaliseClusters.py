@@ -153,23 +153,42 @@ class ClusterAnalysisApp:
         st.subheader('Seleção de Variáveis Binárias')
         selected_vars = st.multiselect('Selecione as Variáveis Binárias para Visualizar', self.binary_columns, default=self.binary_columns)
 
+        # Filtro para seleção de gráficos
+        st.subheader('Seleção de Gráficos')
+        available_plots = {
+            'Distribuição das Variáveis Binárias por Cluster': 'plot_bar_charts',
+            'Heatmap de Frequência': 'plot_heatmap',
+            'Gráfico Radar para Análise de Múltiplas Variáveis Binárias': 'plot_radar_chart',
+            'Boxplot de Variáveis Numéricas por Cluster': 'plot_boxplot',
+            'Scatter Plot de Variáveis Selecionadas': 'plot_scatter',
+            'Histograma de Variável Numérica': 'plot_histogram'
+        }
+        selected_plots = st.multiselect('Selecione os Gráficos que Deseja Visualizar', list(available_plots.keys()), default=list(available_plots.keys()))
+
         # Gráficos Interativos para Colunas Binárias
-        st.subheader('Distribuição das Variáveis Binárias por Cluster')
-        if selected_vars:
+        if 'Distribuição das Variáveis Binárias por Cluster' in selected_plots and selected_vars:
             self.plot_bar_charts(df_filtered, selected_vars)
 
         # Heatmap de Frequência
-        self.plot_heatmap(df_filtered)
+        if 'Heatmap de Frequência' in selected_plots:
+            self.plot_heatmap(df_filtered)
 
         # Radar Chart para Visualização de Múltiplas Variáveis Binárias
-        st.subheader('Gráfico Radar para Análise de Múltiplas Variáveis Binárias')
-        for cluster in selected_cluster:
-            self.plot_radar_chart(df_filtered, cluster)
+        if 'Gráfico Radar para Análise de Múltiplas Variáveis Binárias' in selected_plots:
+            for cluster in selected_cluster:
+                self.plot_radar_chart(df_filtered, cluster)
 
-        # Novos Gráficos Interativos
-        self.plot_boxplot(df_filtered)
-        self.plot_scatter(df_filtered)
-        self.plot_histogram(df_filtered)
+        # Boxplot de Variáveis Numéricas por Cluster
+        if 'Boxplot de Variáveis Numéricas por Cluster' in selected_plots:
+            self.plot_boxplot(df_filtered)
+
+        # Scatter Plot para Variáveis Selecionadas
+        if 'Scatter Plot de Variáveis Selecionadas' in selected_plots:
+            self.plot_scatter(df_filtered)
+
+        # Histograma de Variável Numérica
+        if 'Histograma de Variável Numérica' in selected_plots:
+            self.plot_histogram(df_filtered)
 
 
 # Função para construir a página
