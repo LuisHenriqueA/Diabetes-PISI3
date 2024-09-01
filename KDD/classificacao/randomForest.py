@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Carregando o dataset
-base = pd.read_parquet('dfCleaned.parquet')
+base = pd.read_parquet('KDD/classificacao/dfCleaned.parquet')
 
 def normalizar_coluna(df, nome_coluna):
     # Inicializar o MinMaxScaler
@@ -77,6 +77,21 @@ print(report_train)
 
 print(f"Acurácia nos dados de teste Random forest com peso maior para o que tem dificuldade: {accuracy_test:.2f}")
 print(report_test)
+
+print("Resultados no Treino com StratifiedKFold:")
+print(f"Acurácia no treino: {accuracy_train:.2f}")
+print(report_train)
+
+print("\nResultados no Teste:")
+print(f"Acurácia no teste: {accuracy_test:.2f}")
+print(report_test)
+
+# Comparando diretamente acurácia ou outras métricas, se necessário
+if abs(accuracy_train - accuracy_test) < 0.05:  # Tolerância de 5%
+    print("As métricas de treino e teste são consistentes.")
+else:
+    print("Há uma diferença significativa entre treino e teste.")
+
 
 # Calculando a importância das features
 importances = rf.feature_importances_
