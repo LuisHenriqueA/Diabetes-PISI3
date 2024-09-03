@@ -67,13 +67,39 @@ y_test_pred = xgb_model.predict(X_test)
 print("Classification Report (Teste):")
 print(classification_report(y_test, y_test_pred, target_names=['Não tem dificuldade', 'Tem dificuldade']))
 
+# Criando um dicionário para as traduções
+traducoes = {
+    "Age": "Idade",
+    "GenHlth": "Saúde Geral",
+    "PhysHlth": "Saúde Física",
+    "BMI": "Índice de Massa Corporal",
+    "Income": "Renda",
+    "PhysActivity": "Atividade Física",
+    "Education": "Educação",
+    "MentHlth": "Saúde Mental",
+    "HighBP": "Pressão Alta",
+    "Smoker": "Fumante",
+    "Stroke": "AVC",
+    "NoDocbcCost": "Sem Consulta Médica por Custo",
+    "HeartDiseaseorAttack": "Doença Cardíaca ou Ataque",
+    "Diabetes_012": "Diabetes",
+    "HighChol": "Colesterol Alto"
+}
+
+# Renomeando as colunas de X_test
+X_test_traduzido = X_test.rename(columns=traducoes)
+
+# Ajuste do modelo (se necessário)
+xgb_model.fit(X_res, y_res)
+
+# Criando o objeto explainer do SHAP
 explainer = shap.TreeExplainer(xgb_model)
 
-# Calculando os valores SHAP para o conjunto de teste
-shap_values = explainer.shap_values(X_test)
+# Calculando os valores SHAP para o conjunto de teste traduzido
+shap_values = explainer.shap_values(X_test_traduzido)
 
-# Sumário plot para importância global das features
-shap.summary_plot(shap_values, X_test)
+# Sumário plot para importância global das features traduzidas
+shap.summary_plot(shap_values, X_test_traduzido)
 
-# Para importância média das features
-shap.summary_plot(shap_values, X_test, plot_type="bar")
+# Para importância média das features traduzidas
+shap.summary_plot(shap_values, X_test_traduzido, plot_type="bar")
