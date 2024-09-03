@@ -1,111 +1,69 @@
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import StratifiedKFold, cross_val_predict, train_test_split
-from sklearn.metrics import classification_report, accuracy_score
+from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val_predict
+from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.preprocessing import MinMaxScaler
-from imblearn.under_sampling import RandomUnderSampler
+from imblearn.combine import SMOTEENN
+import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
+from imblearn.over_sampling import ADASYN
 
 # Carregando o dataset
 base = pd.read_parquet('KDD/classificacao/dfCleaned.parquet')
 
+# Função para normalizar colunas
 def normalizar_coluna(df, nome_coluna):
-    # Inicializar o MinMaxScaler
     scaler = MinMaxScaler()
-    
-    # Selecionar a coluna especificada
-    coluna = df[[nome_coluna]]
-    
-    # Normalizar a coluna
-    df[nome_coluna] = scaler.fit_transform(coluna)
+    df[nome_coluna] = scaler.fit_transform(df[[nome_coluna]])
 
 # Normalizando colunas
 colunas_para_normalizar = ['GenHlth', 'Age', 'MentHlth', 'PhysHlth', 'Income', 'Education', 'BMI', 'Diabetes_012']
 for coluna in colunas_para_normalizar:
     normalizar_coluna(base, coluna)
 
-# Dropando colunas com menor correlação e a target
+# Separando features e target
 X = base.drop(columns=['AnyHealthcare', 'HvyAlcoholConsump', 'Fruits', 'Sex', 'Veggies', 'CholCheck', 'DiffWalk'])
 y = base['DiffWalk']
 
-# Fazendo a separação em treino e teste
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
+# Renomeando as classes
+y = y.replace({0: 'Não tem dificuldade', 1: 'Tem dificuldade'})
 
-# Renomeando para ficar mais entendível
-y_train = y_train.replace({0: 'Não tem dificuldade', 1: 'Tem dificuldade'})
-y_test = y_test.replace({0: 'Não tem dificuldade', 1: 'Tem dificuldade'})
-
-# Definindo o RandomUnderSampler
-rus = RandomUnderSampler(random_state=42)
-# Aplicando para X e y
-X_res, y_res = rus.fit_resample(X_train, y_train)
-
-# Ajustando o modelo Random Forest com pesos de classe modificados
+# Definindo o modelo ajustado para reduzir overfitting
 rf = RandomForestClassifier(
-    random_state=42,
-    n_estimators=300,
-    max_depth=9,
-    min_samples_split=25,
-    min_samples_leaf=15,
-    max_features='sqrt',
-    class_weight={'Não tem dificuldade': 1, 'Tem dificuldade': 1.010}
-)
+    random_state=77,
+    n_estimators=100,          # Mantendo o número de árvores moderado
+    max_depth=7,               # Limitar a profundidade das árvores
+    min_samples_split=10,      # Aumentar o número mínimo de amostras para dividir um nó
+    min_samples_leaf=5,        # Aumentar o número mínimo de amostras por folha
+    max_features='sqrt'        # Limitar o número de features consideradas para cada split
+) 
+# Validação cruzada e obtenção de previsões
+cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=77)
+y_pred = cross_val_predict(rf, X, y, cv=cv)
 
-# Criando o objeto de validação cruzada com 5 folds estratificados
-cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+# Relatório de classificação após a validação cruzada
+print("Classification Report (Validação Cruzada):")
+print(classification_report(y, y_pred, target_names=['Não tem dificuldade', 'Tem dificuldade']))
 
-# Usando cross_val_predict para obter previsões para cada fold (dados de treino)
-y_pred_train = cross_val_predict(rf, X_res, y_res, cv=cv)
+# Dividindo os dados em treino e teste
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=77)
 
-# Treinando o modelo nos dados de treino completos
+# Balanceamento dos dados de treino usando SMOTEENN
+adasyn = ADASYN(random_state=77)
+X_res, y_res = adasyn.fit_resample(X_train, y_train)
+
+
+
+# Treinando o modelo nos dados balanceados de treino
 rf.fit(X_res, y_res)
 
-# Fazendo previsões nos dados de teste
-y_pred_test = rf.predict(X_test)
+# Avaliação no conjunto de treino
+y_train_pred = rf.predict(X_res)
+print("Classification Report (Treino):")
+print(classification_report(y_res, y_train_pred, target_names=['Não tem dificuldade', 'Tem dificuldade']))
 
-# Calculando e exibindo o relatório de classificação para dados de treino
-accuracy_train = accuracy_score(y_res, y_pred_train)
-report_train = classification_report(y_res, y_pred_train)
-
-# Calculando e exibindo o relatório de classificação para dados de teste
-accuracy_test = accuracy_score(y_test, y_pred_test)
-report_test = classification_report(y_test, y_pred_test)
-
-print(f"Acurácia nos dados de treino Random forest com peso maior para o que tem dificuldade: {accuracy_train:.2f}")
-print(report_train)
-
-print(f"Acurácia nos dados de teste Random forest com peso maior para o que tem dificuldade: {accuracy_test:.2f}")
-print(report_test)
-
-print("Resultados no Treino com StratifiedKFold:")
-print(f"Acurácia no treino: {accuracy_train:.2f}")
-print(report_train)
-
-print("\nResultados no Teste:")
-print(f"Acurácia no teste: {accuracy_test:.2f}")
-print(report_test)
-
-# Comparando diretamente acurácia ou outras métricas, se necessário
-if abs(accuracy_train - accuracy_test) < 0.05:  # Tolerância de 5%
-    print("As métricas de treino e teste são consistentes.")
-else:
-    print("Há uma diferença significativa entre treino e teste.")
-
-
-# Calculando a importância das features
-importances = rf.feature_importances_
-indices = np.argsort(importances)[::-1]
-
-# Exibindo a importância das features
-print("Importância das Features:")
-for i in range(X.shape[1]):
-    print(f"{X.columns[indices[i]]}: {importances[indices[i]]:.4f}")
-
-# Plotando a importância das features
-plt.figure(figsize=(10, 6))
-plt.title("Importância das Features")
-plt.bar(range(X.shape[1]), importances[indices], align="center")
-plt.xticks(range(X.shape[1]), X.columns[indices], rotation=90)
-plt.tight_layout()
-plt.show()
+# Avaliação no conjunto de teste
+y_test_pred = rf.predict(X_test)
+print("Classification Report (Teste):")
+print(classification_report(y_test, y_test_pred, target_names=['Não tem dificuldade', 'Tem dificuldade']))
