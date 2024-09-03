@@ -6,6 +6,11 @@ from sklearn.preprocessing import MinMaxScaler
 from imblearn.over_sampling import ADASYN
 import seaborn as sns
 import matplotlib.pyplot as plt
+from sklearn.model_selection import StratifiedKFold, cross_val_predict
+from sklearn.metrics import classification_report
+from sklearn.preprocessing import MinMaxScaler
+import shap
+
 
 # Carregando o dataset
 print("Carregando dataset")
@@ -27,20 +32,17 @@ y = base['DiffWalk']
 # Ajustando os hiperparâmetros do modelo XGBoost
 print("Ajustando hiperparametros")
 xgb_model = xgb.XGBClassifier(
-    random_state=2,
-    max_depth=3,               
-    min_child_weight=6,        
-    gamma=0.6,                 
-    subsample=0.6,             
-    colsample_bytree=0.6,      
-    learning_rate=0.01,        
-    n_estimators=1000,         
-    reg_alpha=0.2,             
-    reg_lambda=0.3,            
-    scale_pos_weight=1,        
-    early_stopping_rounds=50,  
-    eval_metric="logloss"
+    random_state=13,
 )
+# Configurando a validação cruzada estratificada
+cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=13)
+
+# Realizando predições com validação cruzada
+y_pred = cross_val_predict(xgb_model, X, y, cv=cv)
+
+# Relatório de classificação após a validação cruzada
+print("Classification Report (Validação Cruzada):")
+print(classification_report(y, y_pred, target_names=['Não tem dificuldade', 'Tem dificuldade']))
 
 # Dividindo os dados em treino e teste
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, stratify=y, random_state=77)
@@ -65,4 +67,13 @@ y_test_pred = xgb_model.predict(X_test)
 print("Classification Report (Teste):")
 print(classification_report(y_test, y_test_pred, target_names=['Não tem dificuldade', 'Tem dificuldade']))
 
-#
+explainer = shap.TreeExplainer(xgb_model)
+
+# Calculando os valores SHAP para o conjunto de teste
+shap_values = explainer.shap_values(X_test)
+
+# Sumário plot para importância global das features
+shap.summary_plot(shap_values, X_test)
+
+# Para importância média das features
+shap.summary_plot(shap_values, X_test, plot_type="bar")
