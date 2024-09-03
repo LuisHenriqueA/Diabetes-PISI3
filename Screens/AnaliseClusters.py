@@ -7,6 +7,7 @@ import seaborn as sns
 import numpy as np
 from itertools import product
 from matplotlib import colors
+import plotly.graph_objects as go
 
 
 class ClusterAnalysisApp:
@@ -17,18 +18,45 @@ class ClusterAnalysisApp:
         self.data_path = data_path
         self.df = None
         self.binary_columns = [
-            'Sex', 'Smoker', 'HvyAlcoholConsump', 'PhysActivity', 'Fruits', 'Veggies', 
-            'HighBP', 'HighChol', 'Stroke', 'HeartDiseaseorAttack', 'DiffWalk'
+            'Sexo', 'Fumante', 'Consumo excessivo de álcool', 'Pratica atividade física', 'Consome frutas diariamente', 
+            'Consome vegetais diariamente', 'Pressão alta', 'Colesterol alto', 'AVC', 
+            'Doença Coronariana ou Infarto do Miocárdio', 'Dificuldade em Subir Escadas'
         ]
-        self.numeric_columns = ['BMI', 'Diabetes_012']  # Incluindo variáveis numéricas adicionais
+        self.numeric_columns = ['IMC', 'Não, pré ou Diabético']  # Incluindo variáveis numéricas adicionais
         self.color_map = {0: '#0BAB7C', 1: '#C7F4C2'}  # Novas cores para os clusters
+
+    def renomear_colunas(self, df):
+        """
+        Renomeia as colunas do DataFrame com base em um dicionário de mapeamento.
+        """
+        colunas_renomeadas = {
+            'Sex': 'Sexo',
+            'Smoker': 'Fumante',
+            'HvyAlcoholConsump': 'Consumo excessivo de álcool',  # Você pode definir o nome que quiser aqui
+            'PhysActivity': 'Pratica atividade física',
+            'Fruits': 'Consome frutas diariamente',
+            'Veggies': 'Consome vegetais diariamente',
+            'HighBP': 'Pressão alta',
+            'HighChol': 'Colesterol alto',
+            'Stroke': 'AVC',
+            'HeartDiseaseorAttack': 'Doença Coronariana ou Infarto do Miocárdio',
+            'DiffWalk': 'Dificuldade em Subir Escadas',
+            'BMI': 'IMC',
+            'Diabetes_012': 'Não, pré ou Diabético'
+        }
+
+        # Renomeia as colunas do DataFrame
+        df.rename(columns=colunas_renomeadas, inplace=True)
+        return df
 
     def load_data(self):
         """
-        Carrega o dataset do arquivo Parquet.
+        Carrega o dataset do arquivo Parquet e renomeia as colunas.
         """
         if os.path.exists(self.data_path):
             self.df = pd.read_parquet(self.data_path)
+            # Renomear as colunas após carregar o DataFrame
+            self.df = self.renomear_colunas(self.df)
         else:
             st.error(f"Arquivo não encontrado: {self.data_path}")
             st.stop()
@@ -46,52 +74,73 @@ class ClusterAnalysisApp:
                 color='cluster', 
                 barmode='group', 
                 title=f'Distribuição de {column} por Cluster',
-                color_discrete_map=self.color_map
+                color_discrete_map={0: '#0BAB7C', 1: '#C7F4C2'},
+                color_discrete_sequence=['#0BAB7C', '#C7F4C2']
             )
+            fig.update_traces(marker=dict(line=dict(width=0)))  # Remove linhas em volta das barras para destacar as cores
             st.plotly_chart(fig)
 
     def plot_heatmap(self, df_filtered):
         """
-        Cria um heatmap de frequência das variáveis binárias por cluster.
+        Cria um heatmap interativo de frequência das variáveis binárias por cluster,
+        mostrando os valores diretamente nas células.
         """
         st.subheader('Heatmap de Frequência das Variáveis Binárias')
         st.markdown("Este heatmap mostra a frequência média de cada variável binária dentro de cada cluster.")
 
+        # Filtrando as colunas binárias e a coluna de cluster
         heatmap_data = df_filtered[self.binary_columns + ['cluster']]
+    
+        # Agrupando por cluster e calculando a média
         heatmap_data = heatmap_data.groupby('cluster').mean().T
 
-        plt.figure(figsize=(10, 6))
-        sns.heatmap(heatmap_data, annot=True, cmap='viridis')
-        st.pyplot(plt.gcf())
+        # Criando o heatmap interativo usando Plotly
+        fig = px.imshow(
+            heatmap_data,
+            labels=dict(x="Cluster", y="Variável", color="Frequência Média"),
+            x=heatmap_data.columns,
+            y=heatmap_data.index,
+            color_continuous_scale='greens',
+            text_auto=True  # Adiciona os valores nas células
+        )
+    
+        # Atualizando a formatação dos valores nas células
+        fig.update_traces(texttemplate="%{z:.2f}", textfont_size=12)  # Usando o valor correto para referenciar os dados
+
+        # Exibindo o gráfico no Streamlit
+        st.plotly_chart(fig)
 
     def plot_radar_chart(self, df_filtered, cluster):
         """
-        Cria um gráfico de radar para múltiplas variáveis binárias de um cluster.
+        Cria um gráfico de radar interativo otimizado para múltiplas variáveis binárias de um cluster.
         """
         data = df_filtered[df_filtered['cluster'] == cluster]
         mean_values = data[self.binary_columns].mean().values
         categories = list(self.binary_columns)
 
-        mean_values = np.concatenate((mean_values, [mean_values[0]]))
-        angles = np.linspace(0, 2 * np.pi, len(categories), endpoint=False).tolist()
-        angles += angles[:1]
+        mean_values = np.concatenate((mean_values, [mean_values[0]]))  # Fechando o loop do radar
 
-        fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(polar=True))
+        fig = go.Figure(data=go.Scatterpolar(
+            r=mean_values,
+            theta=categories + [categories[0]],  # Fechando o loop do radar
+            fill='toself',
+            line_color='#0BAB7C',  # Cor da linha
+            fillcolor='rgba(11, 171, 124, 0.4)',  # Cor de preenchimento com transparência
+            opacity=0.6
+        ))
 
-        if cluster in self.color_map:
-            color = self.color_map[cluster]
-        else:
-            color = '#333333'  # Cor padrão se o cluster não estiver no dicionário de cores
+        # Configurações simplificadas para otimizar a performance
+        fig.update_layout(
+            polar=dict(
+                radialaxis=dict(visible=True, range=[0, 1])
+            ),
+            showlegend=False,  # Removendo a legenda para reduzir o tempo de renderização
+            title=f'Perfil do Cluster {cluster}',
+            margin=dict(l=30, r=30, t=30, b=30)  # Margens menores para otimizar o espaço
+        )
 
-        ax.plot(angles, mean_values, linewidth=1, linestyle='solid', label=f'Cluster {cluster}', color=color)
-        ax.fill(angles, mean_values, alpha=0.3, color=color)
-        ax.set_ylim(0, 1)
-
-        plt.xticks(angles[:-1], categories, color='grey', size=8)
-        plt.title(f'Perfil do Cluster {cluster}')
-        ax.grid(True)
-
-        st.pyplot(plt.gcf())
+        # Exibindo o gráfico interativo no Streamlit
+        st.plotly_chart(fig, use_container_width=True)  # Tenta otimizar o uso de largura
 
     def plot_boxplot(self, df_filtered):
         """
@@ -99,10 +148,10 @@ class ClusterAnalysisApp:
         """
         st.subheader('Boxplot de Variáveis Numéricas por Cluster')
         st.markdown("O boxplot visualiza a distribuição e outliers das variáveis numéricas dentro de cada cluster.")
-        for var in self.numeric_columns:
-            fig = px.box(df_filtered, x='cluster', y=var, color='cluster', 
-                         title=f'Boxplot de {var} por Cluster', color_discrete_map=self.color_map)
-            st.plotly_chart(fig)
+        
+        fig = px.box(df_filtered, x='cluster', y=self.numeric_columns[0], color='cluster', 
+                         title=f'Boxplot de IMC por Cluster', color_discrete_map=self.color_map, color_discrete_sequence=['#0BAB7C', '#C7F4C2'])
+        st.plotly_chart(fig)
 
     def plot_scatter(self, df_filtered):
         """
@@ -110,13 +159,16 @@ class ClusterAnalysisApp:
         """
         st.subheader('Scatter Plot de Variáveis Selecionadas')
         st.markdown("Scatter plot para explorar a correlação entre duas variáveis numéricas selecionadas.")
-        selected_x = st.selectbox('Selecione a variável X', self.numeric_columns)
-        selected_y = st.selectbox('Selecione a variável Y', self.numeric_columns)
+        col1, col2 = st.columns(2)
+        with col1:
+            selected_x = st.selectbox('Selecione a variável X', self.numeric_columns, key='scatter_x')
+        with col2:
+            selected_y = st.selectbox('Selecione a variável Y', self.numeric_columns, key='scatter_y')
 
         if selected_x and selected_y:
             fig = px.scatter(df_filtered, x=selected_x, y=selected_y, color='cluster',
                              title=f'Scatter Plot de {selected_x} vs {selected_y} por Cluster', 
-                             color_discrete_map=self.color_map)
+                             color_discrete_map=self.color_map, color_discrete_sequence=['#0BAB7C', '#C7F4C2'])
             st.plotly_chart(fig)
 
     def plot_histogram(self, df_filtered):
@@ -125,13 +177,61 @@ class ClusterAnalysisApp:
         """
         st.subheader('Histograma de Variável Numérica')
         st.markdown("Histograma mostrando a distribuição de uma variável numérica por cluster.")
-        selected_var = st.selectbox('Selecione uma Variável para o Histograma', self.numeric_columns)
+        selected_var = st.selectbox('Selecione uma Variável para o Histograma', self.numeric_columns, key='histogram_var')
 
         if selected_var:
             fig = px.histogram(df_filtered, x=selected_var, color='cluster', barmode='overlay', 
                                title=f'Histograma de {selected_var} por Cluster', 
-                               color_discrete_map=self.color_map)
+                               color_discrete_map=self.color_map,
+                               opacity=0.7, color_discrete_sequence=['#0BAB7C', '#C7F4C2'])
             st.plotly_chart(fig)
+
+
+    def plot_pareto(self, df_filtered):
+        """
+        Cria um gráfico de Pareto para mostrar a importância das variáveis binárias na formação dos clusters.
+        """
+        st.subheader('Gráfico de Pareto para Análise de Importância de Features')
+        st.markdown("Visualize a importância das variáveis na formação dos clusters.")
+
+        # Calculando a importância das features como o desvio padrão das médias dos clusters
+        feature_importance = df_filtered[self.binary_columns + ['cluster']].groupby('cluster').mean().std().sort_values(ascending=False)
+        
+        # Preparando dados para Pareto (cumulativo)
+        cum_percentage = feature_importance.cumsum() / feature_importance.sum() * 100
+
+        fig = go.Figure()
+
+        # Adicionando barras
+        fig.add_trace(go.Bar(
+            x=feature_importance.index,
+            y=feature_importance.values,
+            name='Importância',
+            marker_color='#0BAB7C'
+        ))
+
+        # Adicionando linha de porcentagem cumulativa
+        fig.add_trace(go.Scatter(
+            x=feature_importance.index,
+            y=cum_percentage.values,
+            name='Porcentagem Cumulativa',
+            yaxis='y2',
+            mode='lines+markers',
+            line=dict(color='#145214', width=2)
+        ))
+
+        # Configurando layout com dois eixos Y
+        fig.update_layout(
+            title='Importância de Features por Cluster',
+            xaxis=dict(title='Variável'),
+            yaxis=dict(title='Desvio Padrão', side='left'),
+            yaxis2=dict(title='Porcentagem Cumulativa (%)', overlaying='y', side='right'),
+            legend=dict(x=0.01, y=0.99),
+            barmode='group',
+            template='plotly_white'
+        )
+
+        st.plotly_chart(fig)
 
     def build_page(self):
         """
@@ -161,7 +261,10 @@ class ClusterAnalysisApp:
             'Gráfico Radar para Análise de Múltiplas Variáveis Binárias': 'plot_radar_chart',
             'Boxplot de Variáveis Numéricas por Cluster': 'plot_boxplot',
             'Scatter Plot de Variáveis Selecionadas': 'plot_scatter',
-            'Histograma de Variável Numérica': 'plot_histogram'
+            'Histograma de Variável Numérica': 'plot_histogram',
+            'Scatter Plot 3D de Variáveis Selecionadas': 'plot_3d_scatter',
+            'Gráfico de Densidade Kernel (KDE) por Cluster': 'plot_kde',
+            'Gráfico de Pareto para Análise de Importância de Features': 'plot_pareto'
         }
         selected_plots = st.multiselect('Selecione os Gráficos que Deseja Visualizar', list(available_plots.keys()), default=list(available_plots.keys()))
 
@@ -178,11 +281,11 @@ class ClusterAnalysisApp:
             for cluster in selected_cluster:
                 self.plot_radar_chart(df_filtered, cluster)
 
-        # Boxplot de Variáveis Numéricas por Cluster
+        # Boxplot para Visualização de Variáveis Numéricas
         if 'Boxplot de Variáveis Numéricas por Cluster' in selected_plots:
             self.plot_boxplot(df_filtered)
 
-        # Scatter Plot para Variáveis Selecionadas
+        # Scatter Plot
         if 'Scatter Plot de Variáveis Selecionadas' in selected_plots:
             self.plot_scatter(df_filtered)
 
@@ -191,8 +294,14 @@ class ClusterAnalysisApp:
             self.plot_histogram(df_filtered)
 
 
+        # Pareto Plot
+        if 'Gráfico de Pareto para Análise de Importância de Features' in selected_plots:
+            self.plot_pareto(df_filtered)
+
+
 # Função para construir a página
 def build_page():
     data_path = 'KDD/ClustResult/dfKmeans.parquet'
     app = ClusterAnalysisApp(data_path)
     app.build_page()
+
