@@ -26,27 +26,37 @@ def build_body():
     df = __transform_data(df)
     df_bruto = read_df('DiabetesDataSet/diabetes_012_health_indicators_BRFSS2015')
     df_bruto = __transform_data(df_bruto)
-    # Seletor de gráfico no topo da tela
-    st.header("Escolha os Gráficos")
-    graph_options = {
-        'Histograma Diabético': 'diabetesplot',
-        'Boxplot': 'boxplot',
-        'Gráfico de Venn': 'venn',
-        'Gráfico de violino': 'violin'
-    }
-    selected_graphs = st.multiselect('Selecione os gráficos para mostrar', options=list(graph_options.keys()), default=list(graph_options.keys()))
     
-    # Filtro por gênero
-    gender_filter = st.sidebar.selectbox(
-        'Gênero',
-        options=['Ambos', 'Masculino', 'Feminino'],
-        format_func=lambda x: {'Ambos': 'Ambos', 'Masculino': 'Homem', 'Feminino': 'Mulher'}[x]
-    )
-
+    st.header("Escolha os Gráficos")
+    
+    # Dividindo a tela em duas colunas
+    col1, col2 = st.columns([2, 1])
+    
+    with col1:
+        # Seletor de gráfico
+        graph_options = {
+            'Histograma Diabético': 'diabetesplot',
+            'Boxplot': 'boxplot',
+            'Gráfico de Venn': 'venn',
+            'Gráfico de violino': 'violin'
+        }
+        selected_graphs = st.multiselect(
+            'Selecione os gráficos para mostrar', 
+            options=list(graph_options.keys()), 
+            default=list(graph_options.keys())
+        )
+    
+    with col2:
+        # Filtro por gênero
+        gender_filter = st.selectbox(
+            'Gênero',
+            options=['Ambos', 'Masculino', 'Feminino'],
+            format_func=lambda x: {'Ambos': 'Ambos', 'Masculino': 'Homem', 'Feminino': 'Mulher'}[x]
+        )
+    
     if gender_filter != 'Ambos':
         gender_value = 1 if gender_filter == 'Masculino' else 0
         df = df[df['Sexo'] == gender_value]
-
     
     # Chama as funções com base nas seleções
     if 'Histograma Diabético' in selected_graphs:
