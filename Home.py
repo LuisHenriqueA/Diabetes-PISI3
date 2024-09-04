@@ -15,7 +15,7 @@ def build_page():
     <div class= "justificado">
         <h1>Aprendizado de máquina aplicado no contexto de Diabetes</h1>
         <br>
-        Grupo: Alana lins; David Erick; Davi Vieira; Luis Henrique;
+        Grupo: Alana lins; David Erick; Luis Henrique;
         </br>
         <br>
         O presente estudo aborda a Diabetes Mellitus (DM) como um distúrbio metabólico que afeta milhões de pessoas globalmente, que destaca-se pela sua complexidade e impacto na qualidade de vida dos pacientes.

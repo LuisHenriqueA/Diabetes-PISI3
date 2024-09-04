@@ -5,7 +5,7 @@ import numpy as np
 class PredicaoPage:
     def __init__(self):
         # Carregar o modelo, as features e os scalers salvos
-        with open('random_forest_model.pkl', 'rb') as model_file:
+        with open('xgboost_model.pkl', 'rb') as model_file:
             self.model, self.feature_names, self.scalers = pickle.load(model_file)
 
     def normalizar_input(self, inputs):
@@ -108,7 +108,7 @@ class PredicaoPage:
         )]
 
         inputs['GenHlth'] = st.selectbox(
-            'Em uma escala de 1 a 5, como você classificaria sua saúde no geral, onde "1" é muito bom e "5" é muito ruim?',
+            'Em uma escala de 1 a 5, como você classificaria sua saúde no geral, onde "1" é muito boa e "5" é muito ruim?',
             options=list(genhlth_map)
         )
 
@@ -149,11 +149,12 @@ class PredicaoPage:
             # Fazer a previsão
             prediction = self.model.predict(normalized_inputs)
             
+            # Traduzir a previsão para um texto amigável
+            resultado = "Tem dificuldade em subir escadas" if prediction[0] == 1 else "Não tem dificuldade em subir escadas"
+            
             # Exibir o resultado
-            st.write(f"A previsão é: **{prediction[0]}**")
+            st.write(f"A previsão é: **{resultado}**")
 
 def build_page():
     page = PredicaoPage()
     page.build_page()
-
-
