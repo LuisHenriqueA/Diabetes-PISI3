@@ -106,7 +106,7 @@ def create_histograma_stacked(df: pd.DataFrame, series_col: str) -> go.Figure:
 def build_boxplot_section(df: pd.DataFrame):
     st.markdown('<h3>Diagramas de Caixa</h3>', unsafe_allow_html=True)
     c1, c2 = st.columns([.3, .7])
-    cols = ['IMC']
+    cols = ['IMC', 'Saúde física', 'Saúde Mental']
     selec_col = c1.selectbox('Seleção', options=cols, key='selec_2')
     reverse = c1.checkbox('Inverter orientação', value=False)
     
@@ -165,7 +165,12 @@ def build_venn_plot(df: pd.DataFrame):
             
             # Criar o gráfico de Venn
             fig, ax = plt.subplots(figsize=(8, 6))
-            venn = venn2(subsets=venn_counts, set_labels=[selected_col1, selected_col2])
+            venn = venn2(subsets=venn_counts, set_labels=[selected_col1, selected_col2], set_colors=('#0BAB7C', '#C7F4C2'))
+            for patch in venn.patches:
+                if patch is not None:
+                    patch.set_edgecolor('black')
+                    patch.set_linewidth(2)
+                
             plt.title(f'Gráfico de Venn para {selected_col1} e {selected_col2}')
             
             # Salvar o gráfico em um buffer de memória com fundo transparente
@@ -208,7 +213,8 @@ def build_violin(df: pd.DataFrame):
                         title='Distribuição da Saúde Geral por Condição Diabética',
                         labels={'Condição diabética': 'Condição Diabética', 'Saúde geral': 'Saúde Geral'},
                         color='Condição diabética',
-                        category_orders={'Saúde geral': ordem_saude})  # Forçar a ordem das categorias
+                        category_orders={'Saúde geral': ordem_saude},
+                        color_discrete_sequence=['#0BAB7C', '#C7F4C2', '#A7E7A7'])
         
         # Ajustar o layout para um estilo mais minimalista
         fig.update_layout(

@@ -23,9 +23,10 @@ def __transform_data(df:pd.DataFrame) -> pd.DataFrame:
         'DiffWalk': 'Dificuldade em se locomover',
         'BMI': 'IMC',
         'Diabetes_012': 'Não, pré ou Diabético',
-        'MntlHealth': 'Saúde Mental',
+        'MentHlth': 'Saúde Mental',
         'GenHlth': 'Saúde geral',
-        'AnyHealthcare': 'Cobertura de saúde',  
+        'AnyHealthcare': 'Cobertura de saúde',
+        'PhysHlth': 'Saúde física',
     }
 
     # Renomeia as colunas do DataFrame
