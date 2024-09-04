@@ -14,7 +14,7 @@ import shap
 
 # Carregando o dataset
 print("Carregando dataset")
-base = pd.read_parquet('/Users/alanalins/pisi3/Diabetes-PISI3/KDD/classificacao/dfCleaned.parquet')
+base = pd.read_parquet('KDD/classificacao/dfCleaned.parquet')
 
 # Normalizando colunas
 def normalizar_coluna(df, nome_coluna):

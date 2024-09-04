@@ -15,7 +15,7 @@ def build_page():
     <div class= "justificado">
         <h1>Aprendizado de máquina aplicado no contexto de Diabetes</h1>
         <br>
-        Grupo: Alana lins; David Erick; Davi Vieira; Luis Henrique;
+        Grupo: Alana lins; David Erick; Luis Henrique;
         </br>
         <br>
         O presente estudo aborda a Diabetes Mellitus (DM) como um distúrbio metabólico que afeta milhões de pessoas globalmente, que destaca-se pela sua complexidade e impacto na qualidade de vida dos pacientes.
@@ -44,12 +44,13 @@ def render_page(page_name):
     #elif page_name == "Clusterização🔍":
     #    import Screens.Clusterização
     #   Screens.Clusterização.build_page()
-    elif page_name == "Predição🧠":
-        import Screens.Predição
-        Screens.Predição.build_page()
     elif page_name == "Analise dos Clusters☯️":
         import Screens.AnaliseClusters
         Screens.AnaliseClusters.build_page()
+    elif page_name == "Predição🧠":
+        import Screens.Predição
+        Screens.Predição.build_page()
+    
         
 # Opções de navegação
 def configure_sidebar():
@@ -76,7 +77,7 @@ def configure_sidebar():
                         
     ''', unsafe_allow_html=True)
     
-    page = st.sidebar.radio("Páginas", ["Home🏠", "Dashboards📈", "Predição🧠", "Analise dos Clusters☯️" ], key='sidebar',  label_visibility="hidden")
+    page = st.sidebar.radio("Páginas", ["Home🏠", "Dashboards📈", "Analise dos Clusters☯️", "Predição🧠" ], key='sidebar',  label_visibility="hidden")
     return page
 
 def main():
