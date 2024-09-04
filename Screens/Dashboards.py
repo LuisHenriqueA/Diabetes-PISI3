@@ -68,8 +68,8 @@ def build_body():
     if 'Gráfico de Venn' in selected_graphs:
         build_venn_plot(df)
 
-    if 'Marimekko Chart' in selected_graphs:
-        build_marimekko_chart(df)
+   # if 'Marimekko Chart' in selected_graphs:
+       # build_marimekko_chart(df)
 
     if 'Gráfico de violino' in selected_graphs:
         build_violin(df)
