@@ -6,4 +6,8 @@ pandas>=2.0
 seaborn>=0.12
 notebook
 imbalanced-learn
+<<<<<<< HEAD
+matplotlib-venn
+=======
 hdbscan
+>>>>>>> main
