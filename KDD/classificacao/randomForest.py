@@ -25,6 +25,7 @@ for coluna in colunas_para_normalizar:
 # Separando features e target
 X = base.drop(columns=['AnyHealthcare', 'HvyAlcoholConsump', 'Fruits', 'Sex', 'Veggies', 'CholCheck', 'DiffWalk'])
 y = base['DiffWalk']
+print(base.columns)
 
 # Renomeando as classes
 y = y.replace({0: 'Não tem dificuldade', 1: 'Tem dificuldade'})
