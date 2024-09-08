@@ -38,7 +38,6 @@ def build_body():
             'Histograma Diabético': 'diabetesplot',
             'Boxplot': 'boxplot',
             'Gráfico de Venn': 'venn',
-            'Gráfico de violino': 'violin'
         }
         selected_graphs = st.multiselect(
             'Selecione os gráficos para mostrar', 
@@ -67,12 +66,6 @@ def build_body():
     
     if 'Gráfico de Venn' in selected_graphs:
         build_venn_plot(df)
-
-   # if 'Marimekko Chart' in selected_graphs:
-       # build_marimekko_chart(df)
-
-    if 'Gráfico de violino' in selected_graphs:
-        build_violin(df)
 
 def build_diabetesplot_section(df: pd.DataFrame):
     st.markdown('<h3>Gráfico de barras empilhadas sobre condição diabética</h3>', unsafe_allow_html=True)
@@ -193,57 +186,3 @@ def build_venn_plot(df: pd.DataFrame):
             
             # Exibir o gráfico como uma imagem
             st.image(img, caption=f'Gráfico de Venn para {selected_col1} e {selected_col2}')
-
-
-def build_violin(df: pd.DataFrame):
-    st.markdown('<h3>Gráfico de Violino: Saúde Geral por Condição Diabética</h3>', unsafe_allow_html=True)
-
-    condition_map = {0: 'Não diabético', 1: 'Pré diabético', 2: 'Diabético'}
-    saúde_map = {1: 'Excelente', 2: 'Muito boa', 3: 'Boa', 4: 'Regular', 5: 'Ruim'}
-    df['Condição diabética'] = df['Não, pré ou Diabético'].map(condition_map)
-    df['Saúde geral'] = df['Saúde geral'].map(saúde_map)
-    
-    # Definir a ordem desejada para a coluna 'Saúde geral' e inverter a ordem
-    ordem_saude = ['Excelente', 'Muito boa', 'Boa', 'Regular', 'Ruim']
-    ordem_saude_invertida = ordem_saude[::-1]
-    df['Saúde geral'] = pd.Categorical(df['Saúde geral'], categories=ordem_saude, ordered=True)
-    
-    if 'Saúde geral' in df.columns and 'Condição diabética' in df.columns:
-        
-        # Adicionar a selectbox para o usuário selecionar os grupos de diabetes
-        diabetes_options = ['Todos'] + sorted(df['Condição diabética'].unique())
-        selected_option = st.selectbox('Selecione a condição diabética para visualizar:', diabetes_options)
-
-        # Filtrar o dataframe com base na escolha do usuário
-        if selected_option != 'Todos':
-            df = df[df['Condição diabética'] == selected_option]
-        
-        # Criar o gráfico de violino com Plotly
-        fig = px.violin(df, y='Saúde geral', x='Condição diabética', box=False, points=False,
-                        title='Distribuição da Saúde Geral por Condição Diabética',
-                        labels={'Condição diabética': 'Condição Diabética', 'Saúde geral': 'Saúde Geral'},
-                        color='Condição diabética',
-                        category_orders={'Saúde geral': ordem_saude},
-                        color_discrete_sequence=['#0BAB7C', '#C7F4C2', '#A7E7A7'])
-        
-        # Ajustar o layout para um estilo mais minimalista
-        fig.update_layout(
-            xaxis_title='Condição Diabética',
-            yaxis_title='Saúde Geral',
-            xaxis=dict(showgrid=False, showline=False, showticklabels=True),
-            yaxis=dict(
-                showgrid=False, 
-                showline=False, 
-                showticklabels=True,
-                tickvals=list(range(len(ordem_saude))),  # Definir os valores dos ticks no eixo y como índices
-                ticktext=ordem_saude_invertida  # Definir os textos dos ticks no eixo y invertidos
-            ),
-            boxmode='group',  # Para assegurar que a cor não sobreponha o gráfico de violino
-            violinmode='overlay',  # Ajuste de sobreposição para uma visualização clara
-            margin=dict(l=40, r=40, t=40, b=40)  # Ajustar as margens para garantir espaço suficiente
-        )
-        
-        # Exibir o gráfico no Streamlit
-        st.plotly_chart(fig, use_container_width=True)
-    else:
-        st.error('As colunas "Saúde geral" e "Diabetes" não foram encontradas no dataframe.')
