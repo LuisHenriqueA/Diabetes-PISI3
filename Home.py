@@ -27,8 +27,8 @@ def build_page():
         <br>
         <h2>Perguntas de Pesquisa</h2>
         <ul class="perguntas">
-            <li>Quais são as disparidades de hábitos de vida entre pacientes não diabéticos e diabéticos? (Clusterização)</li>
-            <li>Como os dados sobre falta de visitas médicas por restrições financeiras, plano de saúde, consumo de vegetais e frutas, prática de atividade física, histórico de problemas cardíacos, tabagismo, verificações de colesterol, pressão alta e condições diabéticas podem ser usados para determinar se um paciente terá dificuldades em se locomover? (Classificação)</li>
+            <li>Ao realizar o agrupamento de pacientes, quais fatores se destacam mais na diferenciação entre os grupos formados, e quais aspectos têm maior impacto: os relacionados à saúde ou estilo de vida? (Clusterização)</li>
+            <li>Como os dados sobre frequência à ir ao médico, prática de atividade física, histórico de AVC, doenças cardíacas ou ataque cardíaco, tabagismo, verificação de colesterol, pressão alta, saúde geral, física e mental, renda, educação e condição diabética podem ser usados para prever se um paciente terá dificuldades em se locomover? (Classificação)</li>
         </ul>
             </div>
         ''', unsafe_allow_html=True)
