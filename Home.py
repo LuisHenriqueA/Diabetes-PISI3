@@ -87,7 +87,7 @@ def main():
     menu_items = {
         'About': '''Sistema desenvolvido para cadeira de PISI 3
         Tema: Diabetes
-        Autores: Alana Lins, Davi Vieira, David Erick, Luis Henrique
+        Autores: Alana Lins, David Erick, Luis Henrique
         Dataset link: www.kaggle.com/datasets/alexteboul/diabetes-health-indicators-dataset
         '''
     }

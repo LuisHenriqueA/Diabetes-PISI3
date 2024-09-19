@@ -1,7 +1,7 @@
 import pandas as pd
 import streamlit as st
 from utils.df_functions import read_parquet
-from df_functions import read_csv
+from utils.df_functions import read_csv
 
 def __rename_data(df) -> pd.DataFrame:
     df=read_parquet(df)

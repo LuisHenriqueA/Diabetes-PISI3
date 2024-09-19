@@ -1,5 +1,3 @@
-
-
 from sklearn.preprocessing import MinMaxScaler
 
 def normalizar_coluna(df, nome_coluna):

@@ -250,8 +250,8 @@ class ClusterAnalysisApp:
         """
         Cria um gráfico de Pareto para mostrar a importância das variáveis binárias na formação dos clusters.
         """
-        st.subheader('Gráfico de Pareto para Análise de Importância de Features')
-        st.markdown("Visualize a importância das variáveis na formação dos clusters.")
+        st.subheader('Gráfico de Pareto para Análise de Importância de Features binárias')
+        st.markdown("Visualize a importância das variáveis binárias na formação dos clusters.")
 
         # Calculando a importância das features como o desvio padrão das médias dos clusters
         feature_importance = df_filtered[self.binary_columns + ['cluster']].groupby('cluster').mean().std().sort_values(ascending=False)
