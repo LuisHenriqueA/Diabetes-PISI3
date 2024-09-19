@@ -38,7 +38,8 @@ def build_body():
             'Histograma Diabético': 'diabetesplot',
             'Boxplot': 'boxplot',
             'Gráfico de Venn': 'venn',
-            'Gráfico de Dispersão': 'scatterplot'
+            'Gráfico de Dispersão': 'scatterplot',
+            'Gráfico de Pontos': 'dotplot'
         }
         selected_graphs = st.multiselect(
             'Selecione os gráficos para mostrar', 
@@ -70,6 +71,9 @@ def build_body():
     
     if 'Gráfico de Dispersão' in selected_graphs:
         build_interactive_scatter_plot(df)
+    
+    if 'Gráfico de Pontos' in selected_graphs:
+        build_dot_plot(df)
 
 def build_diabetesplot_section(df: pd.DataFrame):
     st.markdown('<h3>Gráfico de barras empilhadas sobre condição diabética</h3>', unsafe_allow_html=True)
@@ -193,22 +197,22 @@ def build_venn_plot(df: pd.DataFrame):
     
 def build_interactive_scatter_plot(df: pd.DataFrame):
     st.markdown('<h3>Gráfico de Dispersão Interativo: Saúde Geral por Condição Diabética</h3>', unsafe_allow_html=True)
-
+    dfScatter = df.copy()
     condition_map = {0: 'Não diabético', 1: 'Pré diabético', 2: 'Diabético'}
     saúde_map = {1: 'Excelente', 2: 'Muito boa', 3: 'Boa', 4: 'Regular', 5: 'Ruim'}
-    df['Condição diabética'] = df['Não, pré ou Diabético'].map(condition_map)
-    df['Saúde geral'] = df['Saúde geral'].map(saúde_map)
+    dfScatter['Condição diabética'] = dfScatter['Não, pré ou Diabético'].map(condition_map)
+    dfScatter['Saúde geral'] = dfScatter['Saúde geral'].map(saúde_map)
     
     # Adicionar a selectbox para o usuário selecionar os grupos de diabetes
-    diabetes_options = ['Todos'] + sorted(df['Condição diabética'].unique())
-    selected_option = st.selectbox('Selecione a condição diabética para visualizar:', diabetes_options)
+    diabetes_options = ['Todos'] + sorted(dfScatter['Condição diabética'].unique())
+    selected_option = st.selectbox('Selecione a condição diabética para visualizar:', diabetes_options, key='diabetes_options')
 
     # Filtrar o dataframe com base na escolha do usuário
     if selected_option != 'Todos':
-        df = df[df['Condição diabética'] == selected_option]
+        dfScatter = dfScatter[dfScatter['Condição diabética'] == selected_option]
     
     # Contar as ocorrências de "Saúde geral" por "Condição diabética"
-    count_df = df.groupby(['Condição diabética', 'Saúde geral']).size().reset_index(name='Contagem')
+    count_df = dfScatter.groupby(['Condição diabética', 'Saúde geral']).size().reset_index(name='Contagem')
 
     # Criar o gráfico de dispersão interativo
     fig = px.scatter(
@@ -219,7 +223,8 @@ def build_interactive_scatter_plot(df: pd.DataFrame):
         size='Contagem',  # O tamanho dos pontos reflete a contagem
         hover_data={'Contagem': True, 'Condição diabética': True},
         labels={'Contagem': 'Quantidade', 'Saúde geral': 'Saúde Geral'},
-        title='Distribuição Interativa da Saúde Geral por Condição Diabética'
+        title='Distribuição Interativa da Saúde Geral por Condição Diabética',
+        color_discrete_map={'Não diabético': '#0BAB7C', 'Pré diabético': '#C7F4C2', 'Diabético': '#064E3B'}
     )
 
     # Ajustar o layout para uma visualização mais clara
@@ -233,4 +238,41 @@ def build_interactive_scatter_plot(df: pd.DataFrame):
     fig.update_traces(marker=dict(opacity=0.7, line=dict(width=1, color='DarkSlateGrey')))
     
     # Exibir o gráfico no Streamlit
+    st.plotly_chart(fig, use_container_width=True)
+
+def build_dot_plot(df: pd.DataFrame):
+    st.markdown('<h3>Gráfico de Pontos: Saúde Geral por Condição Diabética</h3>', unsafe_allow_html=True)
+
+    condition_map = {0: 'Não diabético', 1: 'Pré diabético', 2: 'Diabético'}
+    saúde_map = {1: 'Excelente', 2: 'Muito boa', 3: 'Boa', 4: 'Regular', 5: 'Ruim'}
+    df['Condição diabética'] = df['Não, pré ou Diabético'].map(condition_map)
+    df['Saúde geral'] = df['Saúde geral'].map(saúde_map)
+
+    diabetes_options2 = ['Todos'] + sorted(df['Condição diabética'].unique())
+    selected_option2 = st.selectbox('Selecione a condição diabética para visualizar:', diabetes_options2, key='diabetes_options2')
+
+    # Filtrar o dataframe com base na escolha do usuário
+    if selected_option2 != 'Todos':
+        df = df[df['Condição diabética'] == selected_option2]
+    
+    count_df = df.groupby(['Condição diabética', 'Saúde geral']).size().reset_index(name='Contagem')
+
+    fig = px.scatter(
+        count_df,
+        x='Contagem',
+        y='Saúde geral',
+        color='Condição diabética',
+        size='Contagem',
+        hover_data={'Contagem': True, 'Condição diabética': True},
+        labels={'Contagem': 'Quantidade', 'Saúde geral': 'Saúde Geral'},
+        title='Distribuição da Saúde Geral por Condição Diabética',
+        color_discrete_map={'Não diabético': '#0BAB7C', 'Pré diabético': '#C7F4C2', 'Diabético': '#064E3B'}
+    )
+
+    fig.update_layout(
+        yaxis=dict(categoryorder='array', categoryarray=['Excelente', 'Muito boa', 'Boa', 'Regular', 'Ruim']),
+        xaxis_title='Quantidade',
+        yaxis_title='Saúde Geral'
+    )
+    
     st.plotly_chart(fig, use_container_width=True)
