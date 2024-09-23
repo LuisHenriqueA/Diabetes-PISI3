@@ -22,7 +22,7 @@ class ClusterAnalysisApp:
             'Doença Coronariana ou Infarto do Miocárdio', 'Dificuldade em Subir Escadas'
         ]
         self.numeric_columns = ['IMC', 'Não, pré ou Diabético']  # Incluindo variáveis numéricas adicionais
-        self.color_map = {0: '#0BAB7C', 1: '#C7F4C2'}  # Novas cores para os clusters
+        self.color_map = {0: '#0BAB7C', 1: '#A6DFA3'}  # Novas cores para os clusters
 
     def renomear_colunas(self, df):
         """
@@ -85,7 +85,7 @@ class ClusterAnalysisApp:
             color='cluster',
             color_discrete_map=self.color_map,
             color_continuous_scale='Greens',
-            color_discrete_sequence=['#0BAB7C', '#C7F4C2'],
+            color_discrete_sequence=['#0BAB7C', '#A6DFA3'],
         )
 
         fig.update_traces(textinfo="label+value")
@@ -130,7 +130,7 @@ class ClusterAnalysisApp:
                 barmode='group', 
                 title=f'Distribuição de {selected_var} por Cluster',
                 color_discrete_map=self.color_map,
-                color_discrete_sequence=['#0BAB7C', '#C7F4C2']
+                color_discrete_sequence=['#0BAB7C', '#A6DFA3']
             )
             fig.update_traces(marker=dict(line=dict(width=0)))  # Remove linhas em volta das barras para destacar as cores
             st.plotly_chart(fig)
@@ -226,7 +226,7 @@ class ClusterAnalysisApp:
         st.markdown("O boxplot visualiza a distribuição e outliers das variáveis numéricas dentro de cada cluster.")
         
         fig = px.box(df_filtered, x='cluster', y=self.numeric_columns[0], color='cluster', 
-                         title=f'Boxplot de IMC por Cluster', color_discrete_map=self.color_map, color_discrete_sequence=['#0BAB7C', '#C7F4C2'])
+                         title=f'Boxplot de IMC por Cluster', color_discrete_map=self.color_map, color_discrete_sequence=['#0BAB7C', '#A6DFA3'])
         st.plotly_chart(fig)
 
 
@@ -242,7 +242,7 @@ class ClusterAnalysisApp:
             fig = px.histogram(df_filtered, x=selected_var, color='cluster', barmode='overlay', 
                                title=f'Histograma de {selected_var} por Cluster', 
                                color_discrete_map=self.color_map,
-                               opacity=0.7, color_discrete_sequence=['#0BAB7C', '#C7F4C2'])
+                               opacity=0.7, color_discrete_sequence=['#0BAB7C', '#A6DFA3'])
             st.plotly_chart(fig)
 
 
