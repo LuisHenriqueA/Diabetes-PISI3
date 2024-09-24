@@ -222,11 +222,11 @@ class ClusterAnalysisApp:
         """
         Cria um boxplot para visualizar a distribuição de variáveis numéricas por cluster.
         """
-        st.subheader('Boxplot de Variáveis Numéricas por Cluster')
+        st.subheader('Boxplot de IMC por Cluster')
         st.markdown("O boxplot visualiza a distribuição e outliers das variáveis numéricas dentro de cada cluster.")
         
         fig = px.box(df_filtered, x='cluster', y=self.numeric_columns[0], color='cluster', 
-                         title=f'Boxplot de IMC por Cluster', color_discrete_map=self.color_map, color_discrete_sequence=['#0BAB7C', '#A6DFA3'])
+                         title=f' ', color_discrete_map=self.color_map, color_discrete_sequence=['#0BAB7C', '#A6DFA3'])
         st.plotly_chart(fig)
 
 
