@@ -39,7 +39,6 @@ def build_body():
             'Boxplot': 'boxplot',
             'Gráfico de Venn': 'venn',
             'Gráfico de Dispersão': 'scatterplot',
-            'Gráfico de Pontos': 'dotplot'
         }
         selected_graphs = st.multiselect(
             'Selecione os gráficos para mostrar', 
@@ -71,9 +70,6 @@ def build_body():
     
     if 'Gráfico de Dispersão' in selected_graphs:
         build_interactive_scatter_plot(df)
-    
-    if 'Gráfico de Pontos' in selected_graphs:
-        build_dot_plot(df)
 
 def build_diabetesplot_section(df: pd.DataFrame):
     st.markdown('<h3>Gráfico de barras empilhadas sobre condição diabética</h3>', unsafe_allow_html=True)
@@ -196,7 +192,7 @@ def build_venn_plot(df: pd.DataFrame):
             st.image(img, caption=f'Gráfico de Venn para {selected_col1} e {selected_col2}')
     
 def build_interactive_scatter_plot(df: pd.DataFrame):
-    st.markdown('<h3>Gráfico de Dispersão Interativo: Saúde Geral por Condição Diabética</h3>', unsafe_allow_html=True)
+    st.markdown('<h3>Gráfico de Dispersão: Saúde Geral por Condição Diabética</h3>', unsafe_allow_html=True)
     dfScatter = df.copy()
     condition_map = {0: 'Não diabético', 1: 'Pré diabético', 2: 'Diabético'}
     saúde_map = {1: 'Excelente', 2: 'Muito boa', 3: 'Boa', 4: 'Regular', 5: 'Ruim'}
@@ -214,7 +210,6 @@ def build_interactive_scatter_plot(df: pd.DataFrame):
     # Contar as ocorrências de "Saúde geral" por "Condição diabética"
     count_df = dfScatter.groupby(['Condição diabética', 'Saúde geral']).size().reset_index(name='Contagem')
 
-    # Criar o gráfico de dispersão interativo
     fig = px.scatter(
         count_df,
         x='Saúde geral',
@@ -223,7 +218,7 @@ def build_interactive_scatter_plot(df: pd.DataFrame):
         size='Contagem',  # O tamanho dos pontos reflete a contagem
         hover_data={'Contagem': True, 'Condição diabética': True},
         labels={'Contagem': 'Quantidade', 'Saúde geral': 'Saúde Geral'},
-        title='Distribuição Interativa da Saúde Geral por Condição Diabética',
+        title='Distribuição da Saúde Geral por Condição Diabética',
         color_discrete_map={'Não diabético': '#0BAB7C', 'Pré diabético': '#C7F4C2', 'Diabético': '#064E3B'}
     )
 
@@ -240,39 +235,3 @@ def build_interactive_scatter_plot(df: pd.DataFrame):
     # Exibir o gráfico no Streamlit
     st.plotly_chart(fig, use_container_width=True)
 
-def build_dot_plot(df: pd.DataFrame):
-    st.markdown('<h3>Gráfico de Pontos: Saúde Geral por Condição Diabética</h3>', unsafe_allow_html=True)
-
-    condition_map = {0: 'Não diabético', 1: 'Pré diabético', 2: 'Diabético'}
-    saúde_map = {1: 'Excelente', 2: 'Muito boa', 3: 'Boa', 4: 'Regular', 5: 'Ruim'}
-    df['Condição diabética'] = df['Não, pré ou Diabético'].map(condition_map)
-    df['Saúde geral'] = df['Saúde geral'].map(saúde_map)
-
-    diabetes_options2 = ['Todos'] + sorted(df['Condição diabética'].unique())
-    selected_option2 = st.selectbox('Selecione a condição diabética para visualizar:', diabetes_options2, key='diabetes_options2')
-
-    # Filtrar o dataframe com base na escolha do usuário
-    if selected_option2 != 'Todos':
-        df = df[df['Condição diabética'] == selected_option2]
-    
-    count_df = df.groupby(['Condição diabética', 'Saúde geral']).size().reset_index(name='Contagem')
-
-    fig = px.scatter(
-        count_df,
-        x='Contagem',
-        y='Saúde geral',
-        color='Condição diabética',
-        size='Contagem',
-        hover_data={'Contagem': True, 'Condição diabética': True},
-        labels={'Contagem': 'Quantidade', 'Saúde geral': 'Saúde Geral'},
-        title='Distribuição da Saúde Geral por Condição Diabética',
-        color_discrete_map={'Não diabético': '#0BAB7C', 'Pré diabético': '#C7F4C2', 'Diabético': '#064E3B'}
-    )
-
-    fig.update_layout(
-        yaxis=dict(categoryorder='array', categoryarray=['Excelente', 'Muito boa', 'Boa', 'Regular', 'Ruim']),
-        xaxis_title='Quantidade',
-        yaxis_title='Saúde Geral'
-    )
-    
-    st.plotly_chart(fig, use_container_width=True)
